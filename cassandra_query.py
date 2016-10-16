@@ -1,3 +1,4 @@
+#!/usr/bin/python
 ''' Query Prometheus for data on
 	- Threadpools 
 	- Read latency
@@ -9,8 +10,8 @@ import time
 overall_stats = []
 def collect_stats():
 	global overall_stats
-	overall_stats.append(query.sendRequest('cassandra_threadpools_activetasks') +\
-			query.sendRequest('cassandra_clientrequest_totallatency'))
+	overall_stats.append(query.sendRequest('org_apache_cassandra_metrics_threadpools_value') +\
+			query.sendRequest('org_apache_cassandra_metrics_clientrequest_98thpercentile'))
 
 for i in range(0,100):
 	collect_stats()

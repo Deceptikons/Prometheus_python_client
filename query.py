@@ -15,6 +15,7 @@ def request(request_type, query, start=None, end=None, step=None, logging_level=
 		string = 'http://localhost:9090/api/v1/' + request_type + '?query=' + query + '&start='+start+'&end='+end + '&step=' + step
 	else:
 		string = 'http://localhost:9090/api/v1/' + request_type + '?query=' + query 
+	print string
 	response = requests.get(string)
 	decoded_obj = json.loads(response.content)
 	if (logging_level>0):
@@ -41,5 +42,5 @@ def request(request_type, query, start=None, end=None, step=None, logging_level=
 def sendRequest(query):
 	start = str(time.time())
 	end = str(time.time()+300)
-	return request('query', query, start, end)
+	return request('query', query, start, end,logging_level=1)
 
