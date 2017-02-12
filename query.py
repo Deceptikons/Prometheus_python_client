@@ -29,7 +29,6 @@ def request(request_type, query, start=None, end=None, step=None, logging_level=
 		pp.pprint(result)
 	returned_values = {}# the dictionary of values we return
 	for iterable in result:
-<<<<<<< HEAD
 		if (source_type=="jmx"):
 			# if the query was a range type
 			if (request_type=='query_range'):
@@ -41,17 +40,8 @@ def request(request_type, query, start=None, end=None, step=None, logging_level=
 		elif (source_type=="node"):
 			#assuming query is not a range type here
 			# build the key
-			key=iterable['metric']['instance']+':'+iterable['metric']['cpu']+':'+iterable['metric']['mode']
-			returned_values[key]=float(iterable['value'][1])
-=======
-		# if the query was a range type
-		if (request_type=='query_range'):
-			values = iterable['values']
-			for i in values:
-				returned_values[iterable['metric']['scope']]=float(i[1])
-		elif (request_type=='query'):
-			returned_values[iterable['metric']['scope']]=float(iterable['value'][1])
->>>>>>> 3e3f9c377f0063549a017458ea4be0a40455daee
+			key=iterable['metric']['instance']+iterable['metric']['cpu']
+			returned_values[iterable['metric']]=float(iterable['value'][1])
 	if (logging_level==1):
 		print returned_values
 	return returned_values
@@ -62,5 +52,5 @@ def request(request_type, query, start=None, end=None, step=None, logging_level=
 def sendRequest(query):
 	start = str(time.time())
 	end = str(time.time()+300)
-	return request('query', query, start, end,logging_level=0)
+	return request('query', query, start, end,logging_level=2)
 
