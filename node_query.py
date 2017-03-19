@@ -21,8 +21,6 @@ def collect_stats():
         overall_stats[i][key].append(dictionary[key])
       else:
         overall_stats[i][key] = [dictionary[key]]
-    print dictionary
-    print overall_stats
 
 def init():
   global stats_name_list
@@ -33,3 +31,5 @@ def init():
 init()
 for i in tqdm.tqdm(range(1000)):
   collect_stats()
+  time.sleep(3)
+print overall_stats

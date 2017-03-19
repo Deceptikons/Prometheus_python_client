@@ -8,23 +8,23 @@ import query
 import tqdm
 import time
 import pickle
-from pyspark import SparkContext
+'''from pyspark import SparkContext
 from pyspark.mllib.tree import DecisionTree, DecisionTreeModel
 from pyspark.mllib.util import MLUtils
 from pyspark.sql import SQLContext 
-from pyspark.mllib.regression import LabeledPoint
+from pyspark.mllib.regression import LabeledPoint'''
 # we periodically send this request every 10(?) seconds 
 overall_stats = []
 def collect_stats():
 	global overall_stats
-	dictionary = query.sendRequest('org_apache_cassandra_metrics_threadpools_value')
+	#dictionary = query.sendRequest('org_apache_cassandra_metrics_threadpools_value')
 	targetdictionary = query.sendRequest('org_apache_cassandra_metrics_clientrequest_98thpercentile')
-	#print targetdictionary
-	overall_stats.append(LabeledPoint(targetdictionary['Read'], dictionary.values()))
+	print targetdictionary
+	#overall_stats.append(LabeledPoint(targetdictionary['Read'], dictionary.values()))
 answer = raw_input("use old data? (y/n)")
 if (answer == 'N' or answer == 'n'):
 	#for i in xrange(100):
-	for i in tqdm.tqdm(range(1000)):
+	for i in tqdm.tqdm(range(2)):
 		try:
 			collect_stats()
 	#		print overall_stats
@@ -39,7 +39,7 @@ else:
 	overall_stats = pickle.load(open("Cassandra_stats.pkl", "r+"))
 # now that we're done with data collection, we train a regression tree using Spark
 
-sc = SparkContext(appName="CassandraRegressionTree")
+'''sc = SparkContext(appName="CassandraRegressionTree")
 sqlcontext = SQLContext(sc)
 data = sc.parallelize(overall_stats)
 #rdf = data.toDF()
@@ -58,4 +58,4 @@ print ('Predictions etc - ', labelsAndPredictions)
 print('Test Mean Squared Error = ' + str(testMSE))
 print('Learned regression tree model:')
 print(model.toDebugString())
-
+'''
