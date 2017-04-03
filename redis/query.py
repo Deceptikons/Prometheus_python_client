@@ -35,17 +35,17 @@ def queryStats(querydict):
 				temp_dict[innerpair[0]] = innerpair[1] 
 		# Finally we query. We return values from the last hour
 		timestamp = time.time()
-		values = r.zrangebyscore(key,timestamp-3600, timestamp)
+		values = r.zrangebyscore(key,timestamp-3600, timestamp,withscores=True )
 		temp_dict["values"] = values
 		print temp_dict
 
 
 if (__name__=="__main__"):
 	# test for this
-	print "hello"
+	'''print "hello"
 	querydict = {}
 	querydict["attribute"] = "org_apache_cassandra_metrics_clientrequest_98thpercentile"
-	queryStats(querydict)
+	queryStats(querydict)'''
 
 	querydict = {}
 	querydict["attribute"] = "node_cpu"

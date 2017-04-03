@@ -5,7 +5,7 @@ import redis
 import tqdm
 from mesosdnsclient import request
 node_exporter_uri = "http://localhost:7070/metrics"
-def scrape(uri):
+def scrape(uri, ip_address):
 	page = requests.get(uri)
 	timestamp = time.time()
 	#print page.content
@@ -21,16 +21,15 @@ def scrape(uri):
 				if "{" in line: 
 					key,key1 = line.split("{")
 					key2, value = key1.split("}")
-					final_key = key +","  + key2
+					final_key = key +","  + key2 + ",instance_ip=" + ip_address
 					r.zadd(final_key, timestamp, value)
-					#r.lpush("keys", final_key)
 					r.sadd("keyset", final_key)
 				# Single key-value pair - can be separated by space
 				else: 
 					final_key,value = line.split(" ")
+					final_key = final_key + ",instance_ip=" + ip_address
 					r.zadd(final_key, timestamp, value)
 					r.sadd("keyset", final_key)
-					#r.lpush("keys", final_key)
 
 # we print all keys
 #print r.lrange("keys", 0, -1)
@@ -43,19 +42,19 @@ def init_uris():
 	# All ports are 7070 for JMX and 9100 for node
 	seed_ip = request("localhost", "cassandraseed")
 	uri_list = []
-	if (len(seed_ip)!=0):
+	if (seed_ip[0]!=''):
 		seed_uri = "http://" + seed_ip[0] + ":7070/metrics"
-		uri_list.append(seed_uri)
+		uri_list.append((seed_uri,seed_ip[0]))
 		# we get a list of test-app instances
 		non_seed_ips = request("localhost", "test-app")
 		for ip in non_seed_ips:
 			if (ip!=""):
 				non_seed_uri = "http://" + ip + ":7070/metrics"
-				uri_list.append(non_seed_uri)
+				uri_list.append((non_seed_uri, ip))
 
 	# we now add the node_exporter uris
 	node_exporter_uri = "http://localhost:9100/metrics"
-	uri_list.append(node_exporter_uri)
+	uri_list.append((node_exporter_uri, "localhost"))
 	return uri_list
 	
 
@@ -66,7 +65,7 @@ if (__name__=="__main__"):
 		uri_to_scrape = init_uris()
 		print uri_to_scrape
 		for uri in uri_to_scrape:
-			scrape(uri)
+			scrape(uri[0],uri[1])
 		time.sleep(1)
 	for key in r.lrange("keys", 0, -1):
 		timestamp = time.time()
