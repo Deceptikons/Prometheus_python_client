@@ -1,5 +1,6 @@
 from query import queryStats
 import requests
+import json
 
 # we query for idle stats
 def analysis():
@@ -28,11 +29,13 @@ def analysis():
 	print global_avg
 	# if the utilization is >70% we can do some scaling up
 	# if it is less than 10% we can do some scaling down
-	if (global_avg<10):
+	if (global_avg<30):
 		# we scale_down
-		r = requests.post("http://localhost:5000/status", data={"state": "down"})
+		data={'state': 'down'}
+		r = requests.post("http://localhost:5000/status", data=json.dumps(data), headers = {'Content-Type': 'application/json'})
 		print (r.status_code, r.reason)
 	elif (global_avg>70):
+		print "scaling up"
 		r = requests.post("http://localhost:5000/status", data={"state": "up"})
 		print (r.status_code, r.reason)
 		
