@@ -6,6 +6,7 @@ import json
 def analysis():
 	querydict= {}
 	querydict["attribute"] = "node_cpu"
+	querydict["mode"]= "idle"
 	stats = queryStats(querydict)
 	print stats
 	global_avg=0

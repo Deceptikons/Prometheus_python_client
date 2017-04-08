@@ -19,6 +19,8 @@ def queryStats(querydict):
 		if (querydict["attribute"] in key):
 			if ("instance" in querydict.keys() and querydict["instance"] in key):
 				keys_to_query.add(key)
+			elif ("mode" in querydict.keys() and querydict["mode"] in key):
+				keys_to_query.add(key)
 			else:
 				keys_to_query.add(key)
 	print keys_to_query

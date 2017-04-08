@@ -40,21 +40,24 @@ def init_uris():
 	# we call mesos-dns - we hardcode IP to localhost for now
 	# services are cassandra-seed and test-app for now 
 	# All ports are 7070 for JMX and 9100 for node
-	seed_ip = request("localhost", "cassandraseed")
-	uri_list = []
-	if (seed_ip[0]!=''):
-		seed_uri = "http://" + seed_ip[0] + ":7070/metrics"
-		uri_list.append((seed_uri,seed_ip[0]))
-		# we get a list of test-app instances
-		non_seed_ips = request("localhost", "test-app")
-		for ip in non_seed_ips:
-			if (ip!=""):
-				non_seed_uri = "http://" + ip + ":7070/metrics"
-				uri_list.append((non_seed_uri, ip))
+	try:
+		seed_ip = request("localhost", "cassandraseed")
+		uri_list = []
+		if (seed_ip[0]!=''):
+			seed_uri = "http://" + seed_ip[0] + ":7070/metrics"
+			uri_list.append((seed_uri,seed_ip[0]))
+			# we get a list of test-app instances
+			non_seed_ips = request("localhost", "test-app")
+			for ip in non_seed_ips:
+				if (ip!=""):
+					non_seed_uri = "http://" + ip + ":7070/metrics"
+					uri_list.append((non_seed_uri, ip))
+	except:
+		pass
 
 	# we now add the node_exporter uris
 	node_exporter_uri = "http://localhost:9100/metrics"
-	uri_list.append((node_exporter_uri, "localhost"))
+	uri_list.append((node_exporter_uri, '"localhost"'))
 	return uri_list
 	
 
