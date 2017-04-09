@@ -7,7 +7,7 @@ def return_percentage_points(querydict):
 	# first we get the stats from queryStats function
 	stats = queryStats(querydict)
 	# for debug purposes we print 
-	print stats
+	#print stats
 	# we iterate over the list of values
 	return_dict = []
 	for stat in stats:
@@ -27,7 +27,7 @@ def return_percentage_points(querydict):
 					temp_dict["values"].append(percentage)
 		# at this stage temp_dict is initialized 
 		# we can add it to return_dict
-		print temp_dict
+		#print temp_dict
 		return_dict.append(temp_dict)
 	return return_dict
 
@@ -35,7 +35,7 @@ if (__name__=="__main__"):
 	querydict = {}
 	querydict["attribute"] = "node_cpu"
 	result = return_percentage_points(querydict)
-	#print result
+	print result
 
 
 					
