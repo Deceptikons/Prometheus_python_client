@@ -81,3 +81,49 @@ def idleStats(cpu):
 	#for stat in stats:	
 	#print stats
 	return keys["idle"]
+
+def getLatency():
+	querydict={}
+	querydict["attribute"] = "org_apache_cassandra_metrics_clientrequest_98thpercentile"
+	stats = queryStats(querydict)
+	for stat in stats:
+		stat["values"] = formatter(stat["values"])
+		print "***************************************************************"
+		print stat
+		#print stat['mode']
+		if stat["instance_ip"] not in keys :
+			keys.update({stat["instance_ip"] : { stat["scope"] : stat["values"] } })
+		elif stat["instance_ip"] != None:
+			print " !!!!@@@@!!!!" , stat["instance_ip"]
+			print " %%%%%%%%%%% " , keys[stat["instance_ip"]]
+			if keys[stat["mode"]] != None:
+				print " (((())))) ",stat["scope"] , stat["values"]
+				temp = keys[stat["instance_ip"]]
+				temp.update({stat["scope"]:stat["values"]})
+				print "AFTER ",temp
+				keys[stat["instance_ip"]] = temp
+				print "......................... ",keys[stat["instance_ip"]]
+
+def computeCPU():
+	querydict={}
+	querydict["attribute"] = "node_cpu"
+	querydict["mode"] = "idle"
+	stats = queryStats(querydict)
+	cpu_count = 0
+	global_avg = 0
+	cpu_utils=[]
+	for stat in stats:
+                if (isinstance(stat, dict) and 'mode' in stat.keys() and stat['mode'] == "idle"):
+                        # we now calculate the average of the list of values
+                        tuples = stat["values"]
+                        # we calculate the percentage of utilization 
+                        if (len(tuples)!=0):
+                                time_taken = float(tuples[-1][1]) - float(tuples[0][1])
+                                cpu_time = float(tuples[-1][0]) - float(tuples[0][0])
+                                avg = 100- (cpu_time/time_taken*100)
+                                print "average utilization ", avg
+				cpu_utils.append(avg)
+                                global_avg+=avg
+                                cpu_count+=1
+	print " GLOBAL :",global_avg/cpu_count
+	return global_avg/cpu_count

@@ -52,6 +52,7 @@ def set_allow_origin(resp):
 
 @app.route('/')
 def api_root():
+  computeCPU()
   return 'Welcome'
 
 @app.route('/getIdle')
@@ -63,6 +64,13 @@ def getIdleTime():
   #print res
   val["data"] = res["cpu"+cpu]
   return json.dumps(val)
-  
+
+@app.route('/stat')
+def getStat():
+  system = request.args.get('system')
+  #res = systemStat(system)
+  res = computeCPU()  
+  return json.dumps(res)
+
 
 app.run(host='127.0.0.1' ,threaded=True , port=1234)

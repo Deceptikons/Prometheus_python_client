@@ -47,11 +47,14 @@ def queryStats(querydict):
 
 if (__name__=="__main__"):
 	# test for this
-	'''print "hello"
+	print "hello"
 	querydict = {}
 	querydict["attribute"] = "org_apache_cassandra_metrics_clientrequest_98thpercentile"
-	queryStats(querydict)'''
+	print queryStats(querydict)
+'''
 
 	querydict = {}
 	querydict["attribute"] = "node_cpu"
-	queryStats(querydict)
+	print queryStats(querydict)
+
+'''
