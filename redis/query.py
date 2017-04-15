@@ -23,7 +23,7 @@ def queryStats(querydict):
 				keys_to_query.add(key)
 			else:
 				keys_to_query.add(key)
-	print keys_to_query
+	#print keys_to_query
 	# we query for all these keys now. We split the key into the following
 	# query - the part before the first ','
 	# split all the other key-value pairs using '='

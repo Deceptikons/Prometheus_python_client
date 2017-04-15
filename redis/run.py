@@ -57,11 +57,11 @@ def api_root():
 @app.route('/getIdle')
 def getIdleTime():
   cpu = request.args.get('cpu')
-  initialize()
+  initialize_util()
   res = idleStats(cpu)
-  val = {"label":"cpu0" , "data":[]}
+  val = {"label":"cpu"+cpu , "data":[]}
   #print res
-  val["data"] = res["cpu0"]
+  val["data"] = res["cpu"+cpu]
   return json.dumps(val)
   
 
