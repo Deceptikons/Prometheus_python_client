@@ -36,10 +36,12 @@ def queryStats(querydict):
 			innerpair = pair.split("=")
 			#print	innerpair 
 			if (len(innerpair)==2):
-				temp_dict[innerpair[0]] = innerpair[1][1:-1]
+				if innerpair[1].startswith('"') and innerpair[1].endswith('"'):
+					innerpair[1]= innerpair[1][1:-1] 
+				temp_dict[innerpair[0]] = innerpair[1]
 		# Finally we query. We return values from the last hour
 		timestamp = time.time()
-		values = r.zrangebyscore(key,timestamp-600, timestamp,withscores=True )
+		values = r.zrangebyscore(key,timestamp-60, timestamp,withscores=True )
 		temp_dict["values"] = values
 		return_dict.append(temp_dict)
 		#print temp_dict
