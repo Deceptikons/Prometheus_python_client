@@ -40,7 +40,7 @@ def analysis():
 		if (global_avg[key]>60):
 			print "scaling up"
 			data={'state': 'up'}
-			r = requests.post("http://localhost:5000/status", data=json.dumps(data), headers = {'Content-Type': 'application/json'})
+			r = requests.post("http://10.10.1.71:5000/status", data=json.dumps(data), headers = {'Content-Type': 'application/json'})
 			print (r.status_code, r.reason)
 			scaled=1
 			break
@@ -51,7 +51,7 @@ def analysis():
 		# we scale_down
 		print "scaling down"
 		data={'state': 'down'}
-		r = requests.post("http://localhost:5000/status", data=json.dumps(data), headers = {'Content-Type': 'application/json'})
+		r = requests.post("http://10.10.1.71:5000/status", data=json.dumps(data), headers = {'Content-Type': 'application/json'})
 		print (r.status_code, r.reason)
 if (__name__=='__main__'):
 	while (True):
