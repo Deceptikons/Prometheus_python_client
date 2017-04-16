@@ -3,7 +3,8 @@ import requests
 import json
 from getpercentage import return_percentage_points
 keys = {}
-
+keys_latency = {}
+memory = {}
 def formatter_util(a):
 	res = []
         count = 0
@@ -25,12 +26,55 @@ def formatter(a):
 		x = [x_axis,y_axis]
 		res.append(x)
 	return res
+
+def memoryFree():
+	querydict = {}
+	querydict["attribute"] = "node_memory_MemTotal"
+	stats = queryStats(querydict)
+	for stat in stats:
+		stat["values"] = formatter_util(stat["values"])
+		print stat
+                #print stat['mode']
+                if stat["instance_ip"] not in memory :
+                        memory.update({stat["instance_ip"] : { stat["query"] : stat["values"] } })
+                elif stat["instance_ip"] != None:
+                        print " !!!!@@@@!!!!" , stat["instance_ip"]
+                        print " %%%%%%%%%%% " , memory[stat["instance_ip"]]
+                        if memory[stat["instance_ip"]] != None:
+                                #print " (((())))) ",stat["scope"] , stat["values"]
+                                temp = memory[stat["instance_ip"]]
+                                temp.update({stat["query"]:stat["values"]})
+                                print "AFTER ",temp
+                                memory[stat["instance_ip"]] = temp
+                                print "......................... ",memory[stat["instance_ip"]]
+	querydict = {}
+	querydict["attribute"] = "node_memory_MemFree"
+	stats = queryStats(querydict)
+	for stat in stats:
+		stat["values"] = formatter_util(stat["values"])
+		if(stat["instance_ip"] not in memory):
+			memory.update({stat["instance_ip"] : { stat["query"] : stat["values"] }})
+		elif stat["instance_ip"]!=None:
+			print " !!!!@@@@!!!!" , stat["instance_ip"]
+                        print " %%%%%%%%%%% " , memory[stat["instance_ip"]]
+                        if memory[stat["instance_ip"]] != None:
+                                #print " (((())))) ",stat["scope"] , stat["values"]
+                                temp = memory[stat["instance_ip"]]
+                                temp.update({stat["query"]:stat["values"]})
+                                print "AFTER ",temp
+                                memory[stat["instance_ip"]] = temp
+                                print "......................... ",memory[stat["instance_ip"]]
+
+	print memory
+	return memory
+
 def initialize_util():
 	
 	querydict= {}
 	querydict["attribute"] = "node_cpu"
 	#stats = queryStats(querydict)
 	stats = return_percentage_points(querydict)
+	print "STATS :",stats
 	for stat in stats:
 		stat["values"] = formatter_util(stat["values"])
 		print "***************************************************************"
@@ -91,19 +135,20 @@ def getLatency():
 		print "***************************************************************"
 		print stat
 		#print stat['mode']
-		if stat["instance_ip"] not in keys :
-			keys.update({stat["instance_ip"] : { stat["scope"] : stat["values"] } })
+		if stat["instance_ip"] not in keys_latency :
+			keys_latency.update({stat["instance_ip"] : { stat["scope"] : stat["values"] } })
 		elif stat["instance_ip"] != None:
 			print " !!!!@@@@!!!!" , stat["instance_ip"]
-			print " %%%%%%%%%%% " , keys[stat["instance_ip"]]
-			if keys[stat["mode"]] != None:
+			print " %%%%%%%%%%% " , keys_latency[stat["instance_ip"]]
+			if keys_latency[stat["instance_ip"]] != None:
 				print " (((())))) ",stat["scope"] , stat["values"]
-				temp = keys[stat["instance_ip"]]
+				temp = keys_latency[stat["instance_ip"]]
 				temp.update({stat["scope"]:stat["values"]})
 				print "AFTER ",temp
-				keys[stat["instance_ip"]] = temp
-				print "......................... ",keys[stat["instance_ip"]]
-
+				keys_latency[stat["instance_ip"]] = temp
+				print "......................... ",keys_latency[stat["instance_ip"]]
+	return keys_latency
+	#return "SUCCESS"
 def computeCPU():
 	querydict={}
 	querydict["attribute"] = "node_cpu"
@@ -127,3 +172,7 @@ def computeCPU():
                                 cpu_count+=1
 	print " GLOBAL :",global_avg/cpu_count
 	return global_avg/cpu_count
+
+
+if (__name__ == "__main__"):
+	memoryFree()
