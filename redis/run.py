@@ -65,4 +65,4 @@ def getIdleTime():
   return json.dumps(val)
   
 
-app.run(host='127.0.0.1' ,threaded=True , port=1234)
+app.run(host='10.10.1.71' ,threaded=True , port=1234)

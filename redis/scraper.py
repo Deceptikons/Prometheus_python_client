@@ -30,7 +30,7 @@ def scrape(uri, ip_address):
             final_key,value = line.split(" ")
             final_key = final_key + ",instance_ip=" + ip_address
             r.zadd(final_key, timestamp, value)
-					r.sadd("keyset", final_key)
+          r.sadd("keyset", final_key)
   except:
     pass
 
