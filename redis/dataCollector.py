@@ -15,6 +15,16 @@ def formatter_util(a):
 		y_axis = i
 		res.append([x_axis,y_axis])
 	return res
+def formatter_latency(a):
+	res = []
+	count = 0
+	for i in a:
+		x = i
+		x_axis = count
+		count+=1
+		y_axis = float(i[0][1:])
+		res.append([x_axis,y_axis])
+	return res
  
 def formatter(a):
 	res = []
@@ -65,10 +75,10 @@ def memoryFree():
                                 memory[stat["instance_ip"]] = temp
                                 print "......................... ",memory[stat["instance_ip"]]
 
-	print memory
+	print "MEM !! : ",memory
 	return memory
 
-def initialize_util():
+def initialize_util(ip):
 	
 	querydict= {}
 	querydict["attribute"] = "node_cpu"
@@ -80,9 +90,9 @@ def initialize_util():
 		print "***************************************************************"
 		print stat
 		#print stat['mode']
-		if stat["mode"] not in keys and stat["instance_ip"] == "localhost":
+		if stat["mode"] not in keys and stat["instance_ip"] == ip:
 			keys.update({stat["mode"] : { stat["cpu"] : stat["values"] } })
-		elif stat["mode"] != None and stat["instance_ip"] == "localhost":
+		elif stat["mode"] != None and stat["instance_ip"] == ip:
 			print " !!!!@@@@!!!!" , stat["mode"]
 			print " %%%%%%%%%%% " , keys[stat["mode"]]
 			if keys[stat["mode"]] != None:
@@ -118,7 +128,7 @@ def initialize():
 				print "......................... ",keys[stat["mode"]]
 	print " >>>> > >>> >>>>>",keys
 
-def idleStats(cpu):
+def idleStats(cpu,ip):
 	querydict= {}
 	querydict["attribute"] = "node_cpu"
 	stats = queryStats(querydict)
@@ -131,7 +141,7 @@ def getLatency():
 	querydict["attribute"] = "org_apache_cassandra_metrics_clientrequest_98thpercentile"
 	stats = queryStats(querydict)
 	for stat in stats:
-		stat["values"] = formatter(stat["values"])
+		stat["values"] = formatter_latency(stat["values"])
 		print "***************************************************************"
 		print stat
 		#print stat['mode']
@@ -157,7 +167,9 @@ def computeCPU(host):
 	cpu_count = 0
 	global_avg = 0
 	cpu_utils=[]
+	print stats
 	for stat in stats:
+		print stat["instance_ip"],"    ",host
                 if (isinstance(stat, dict) and 'mode' in stat.keys() and stat['mode'] == "idle" and stat["instance_ip"] == host):
                         # we now calculate the average of the list of values
                         tuples = stat["values"]
@@ -167,11 +179,12 @@ def computeCPU(host):
                                 cpu_time = float(tuples[-1][0]) - float(tuples[0][0])
                                 avg = 100- (cpu_time/time_taken*100)
                                 print "average utilization ", avg
-				                        cpu_utils.append(avg)
+				cpu_utils.append(avg)
                                 global_avg+=avg
                                 cpu_count+=1
 	print " GLOBAL :",global_avg/cpu_count
 	return global_avg/cpu_count
+
 
 if (__name__ == "__main__"):
 	memoryFree()

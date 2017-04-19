@@ -4,6 +4,8 @@ import requests
 import threading
 import subprocess
 from dataCollector import *
+import throughput
+from throughput import throughput
 app = Flask(__name__)
 
 
@@ -58,8 +60,9 @@ def api_root():
 @app.route('/getIdle')
 def getIdleTime():
   cpu = request.args.get('cpu')
-  initialize_util()
-  res = idleStats(cpu)
+  ip = request.args.get('ip')
+  initialize_util(ip)
+  res = idleStats(cpu,ip)
   val = {"label":"cpu"+cpu , "data":[]}
   #print res
   val["data"] = res["cpu"+cpu]
@@ -82,22 +85,31 @@ def getLatencyTime():
   val["data"] = data
   return json.dumps(val)
 
+@app.route('/throughput')
+def getThroughput():
+  ip = request.args.get('ip')
+  res = throughput(ip)
+  return json.dumps(res)
+
 @app.route('/memory')
 def memory():
   app = request.args.get('ip')
   res = memoryFree()
   res = res[app]
-  value1 = res['node_memory_MemTotal'][0]
-  value2 = res['node_memory_MemFree'][0]
+  value1 = res['node_memory_MemTotal'][0][1][0]
+  value2 = res['node_memory_MemFree'][-1][1][0]
+  #print value1,"   ",value2
   val = float(value1)-float(value2)
-  return val
+  val = val / float(value1)
+  val = val*100
+  return json.dumps(val)
 
 @app.route('/clusterStats')
 def cluster():
   request_string = "http://10.10.1.71:5050/metrics/snapshot"
   response = requests.get(request_string)
   array = json.loads(response.text)
-  print array
+  #print array
   res = { "total_cpus" : array["master/cpus_total"] , "used_cpus" : array["master/cpus_used"] , "total_mem" : array["master/mem_total"] , "used_mem" : array["master/mem_used"]}
   return json.dumps(res)
 @app.route('/latency')

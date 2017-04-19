@@ -37,14 +37,14 @@ def analysis():
 	# if it is less than 10% we can do some scaling down
 	scaled=0
 	for key in global_avg.keys():
-		if (global_avg[key]>60):
+		if (global_avg[key]>75):
 			print "scaling up"
 			data={'state': 'up'}
 			r = requests.post("http://10.10.1.71:5000/status", data=json.dumps(data), headers = {'Content-Type': 'application/json'})
 			print (r.status_code, r.reason)
 			scaled=1
 			break
-		elif (global_avg[key]>30):
+		elif (global_avg[key]>50):
 			print "util is ", global_avg[key]
 			scaled=-1
 	if (scaled==0):

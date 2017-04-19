@@ -4,7 +4,6 @@ import time
 import redis
 import tqdm
 from mesosdnsclient import request
-node_exporter_uri = "http://localhost:7070/metrics"
 def scrape(uri, ip_address):
   try:
     page = requests.get(uri)
@@ -50,7 +49,7 @@ def init_uris():
 			seed_uri = "http://" + seed_ip[0] + ":7070/metrics"
 			uri_list.append((seed_uri,seed_ip[0]))
 			# we get a list of test-app instances
-			non_seed_ips = request("localhost", "test-app")
+			non_seed_ips = request("localhost", "test-app1")
 			for ip in non_seed_ips:
 				if (ip!=""):
 					non_seed_uri = "http://" + ip + ":7070/metrics"
@@ -59,8 +58,8 @@ def init_uris():
 		pass
 
 	# we now add the node_exporter uris
-	node_exporter_uri = "http://localhost:9100/metrics"
-	uri_list.append((node_exporter_uri, '"localhost"'))
+	node_exporter_uri = "http://10.10.1.71:9100/metrics"
+	uri_list.append((node_exporter_uri, '"10.10.1.71"'))
 	node_exporter_uri = "http://10.10.1.72:9100/metrics"
 	uri_list.append((node_exporter_uri, '"10.10.1.72"'))
 	return uri_list
@@ -68,7 +67,6 @@ def init_uris():
 
 
 if (__name__=="__main__"):
-	node_exporter_uri = "http://localhost:9100/metrics"
 	for i in tqdm.tqdm(range(500000)):
 		uri_to_scrape = init_uris()
 		print uri_to_scrape
